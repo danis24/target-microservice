@@ -16,5 +16,6 @@ deploy:
   api_key: 61fe277e-bef7-4ff8-82be-d9f8b1624ab7
   app:
     master: target-microservice
-    runt:
+    run:
+        - "cp .env.example .env"
         - "php artisan migrate"
