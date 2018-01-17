@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Users;
+namespace App\Services\Targets;
 
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
@@ -12,7 +12,7 @@ use App\Services\UUIDEntity;
 use App\Presenters\JsonApiPresenterable as Presenterable;
 use Uuid;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, Presenterable
+class Target extends Model implements AuthenticatableContract, AuthorizableContract, Presenterable
 {
     use Authenticatable, Authorizable, SoftDeletes, UUIDEntity;
 
@@ -28,8 +28,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
+
     protected $fillable = [
-        'first_name', 'last_name', 'username', 'password', 'email'
+        'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip'
     ];
 
     /**
@@ -38,7 +39,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'tokeSite', 'status'
     ];
 
     protected $casts = [
@@ -63,7 +64,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @{inheritDoc}
      */
     public function entityType() {
-        return "users";
+        return "targets";
     }
 
 }

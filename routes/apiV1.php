@@ -11,23 +11,5 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
-
-$router->get('/users', [
-    'as' => 'users', 'uses' => 'UserController@browse'
-]);
-
-$router->get('/users/{id}', [
-    'as' => 'users', 'uses' => 'UserController@read'
-]);
-$router->patch('/users/{id}', [
-    'as' => 'users', 'uses' => 'UserController@edit'
-]);
-$router->post('/users', [
-    'as' => 'users', 'uses' => 'UserController@add'
-]);
-$router->delete('/users/{id}', [
-    'as' => 'users', 'uses' => 'UserController@delete'
-]);
+$router->get('/targets', 'TargetController@browse');
+$router->post('/targets', 'TargetController@add');
