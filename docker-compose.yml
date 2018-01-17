@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+  fpm:
+    build:
+      context: .
+      dockerfile: infrastructure/fpm/Dockerfile
+    image: realpage/lumen-starter:fpm
+    env_file: .env
+    volumes:
+      - ./:/var/www/html
+    links:
+      - db
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/nginx/Dockerfile
+    image: realpage/lumen-starter:nginx
+    volumes:
+      - ./infrastructure/nginx:/etc/nginx/conf.d
+      - ./resources:/var/www/html/resources
+      - ./public:/var/www/html/public
+    ports:
+      - "80:80"
+    links:
+      - fpm
+  db:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: service_target
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_DB: target_db
+  dredd:
+    image: realpage/dredd:2.2
+    volumes_from:
+      - fpm
+    links:
+      - web
+  hercule:
+    image: realpage/hercule:latest
+    volumes_from:
+      - web
+  aglio:
+    image: realpage/aglio:latest
+    volumes_from:
+      - web
