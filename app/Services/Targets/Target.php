@@ -30,7 +30,7 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
      */
 
     protected $fillable = [
-        'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip'
+        'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip', 'tokenSite', 'status'
     ];
 
     /**
@@ -38,9 +38,6 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
      *
      * @var array
      */
-    protected $hidden = [
-        'tokeSite', 'status'
-    ];
 
     protected $casts = [
         "id" => "uuid",
