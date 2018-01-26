@@ -26,20 +26,36 @@ class TargetController extends Controller
 
     public function add(Request $request)
     {
-        $url = $this->getDetailUrl($request->url);
-        $target = $this->service->add($url);
+        $this->validate($request, [
+             'url' => 'required',
+             'email' => 'required|email'
+        ]);
+
+        $data = $this->getDetailUrl($request->url, $request->email);
+        $target = $this->service->add($data);
         return $this->presenter->render($target, 200, [
             'Content-Type' => 'application/vnd.api+json',
             'Accept' => 'application/vnd.api+json'
         ]);
     }
 
-    private function getDetailUrl($url)
+    public function show(Request $request)
+    {
+         $this->validate($request, [
+              'email' => 'required'
+         ]);
+
+         $data = $this->service->showByEmail($request->email);
+         return $this->presenter->renderPaginator($data);
+    }
+
+    private function getDetailUrl($url, $email)
     {
         $site = 'http://ip-api.com/json/'.$url;
         $client = json_decode($this->client->request('GET', $site)->getBody());
         if($client->status == 'success'){
             $data = [
+                'email' => $email,
                 'url' => $url,
                 'ip' => $client->query,
                 'as' => $client->as,

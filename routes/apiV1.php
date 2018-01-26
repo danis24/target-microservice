@@ -13,3 +13,4 @@
 
 $router->get('/targets', 'TargetController@browse');
 $router->post('/targets', 'TargetController@add');
+$router->post('/targets/by_email', 'TargetController@show');

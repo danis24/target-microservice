@@ -17,13 +17,13 @@ class TargetService
         return $this->newTarget()->paginate();
     }
 
-    public function read(Arrayable $payload)
-    {
-        return $this->newTarget()->create($payload->toArray());
-    }
-
     public function add($payload)
     {
         return $this->newTarget()->create($payload);
+    }
+
+    public function showByEmail($email)
+    {
+         return $this->newTarget()->where('email', $email)->paginate();
     }
 }

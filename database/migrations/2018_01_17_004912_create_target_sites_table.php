@@ -15,9 +15,10 @@ class CreateTargetSitesTable extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('email');
             $table->string('ip')->nullable();
             $table->string('url');
-            $table->string('city');
+            $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->string('countryCode')->nullable();
             $table->string('isp')->nullable();
