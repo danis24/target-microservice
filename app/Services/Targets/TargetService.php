@@ -17,6 +17,11 @@ class TargetService
         return $this->newTarget()->paginate();
     }
 
+    public function read($id)
+    {
+         return $this->newTarget()->findByUuid($id);
+    }
+
     public function add($payload)
     {
         return $this->newTarget()->create($payload);
@@ -25,5 +30,12 @@ class TargetService
     public function showByEmail($email)
     {
          return $this->newTarget()->where('email', $email)->paginate();
+    }
+
+    public function update($id, $payload)
+    {
+         $target = $this->read($id);
+         $target->fill($payload)->save();
+         return $target;
     }
 }

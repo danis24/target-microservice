@@ -12,5 +12,7 @@
 */
 
 $router->get('/targets', 'TargetController@browse');
+$router->get('/verified/{id}', 'TargetController@verified');
+$router->get('/targets/{id}', 'TargetController@read');
 $router->post('/targets', 'TargetController@add');
 $router->post('/targets/by_email', 'TargetController@show');

@@ -24,6 +24,12 @@ class TargetController extends Controller
         return $this->presenter->renderPaginator($target);
     }
 
+    public function read($id)
+    {
+         $target = $this->service->read($id);
+         return $this->presenter->render($target);
+    }
+
     public function add(Request $request)
     {
         $this->validate($request, [
@@ -77,5 +83,42 @@ class TargetController extends Controller
             ];
         }
         return $data;
+    }
+
+    protected function checkSite($url, $token)
+    {
+         $site = $url.'/'.$token;
+         $client = $this->client->request('GET', $site)->getBody();
+         return $client;
+    }
+
+    protected function updateStatus($id){
+         $data = [
+              'status' => 'verified'
+         ];
+         $target = $this->service->update($id, $data);
+    }
+
+    public function verified($id)
+    {
+         $target = $this->service->read($id);
+         $check = $this->checkSite($target['url'], $target['tokenSite']);
+         if($target['status'] == 'verified'){
+              $data = [
+                   'message' => 'your site is verified'
+              ];
+         }else{
+              if($check == $target['tokenSite']){
+                   $this->updateStatus($id);
+                   $data = [
+                        'message' => 'verified'
+                   ];
+              }else{
+                   $data = [
+                        'message' => 'Invalid'
+                   ];
+              }
+         }
+         return response()->json($data);
     }
 }
