@@ -38,11 +38,17 @@ class TargetController extends Controller
         ]);
 
         $data = $this->getDetailUrl($request->url, $request->email);
-        $target = $this->service->add($data);
-        return $this->presenter->render($target, 200, [
-            'Content-Type' => 'application/vnd.api+json',
-            'Accept' => 'application/vnd.api+json'
-        ]);
+        if($data['message'] == 'success'){
+             $target = $this->service->add($data);
+             return $this->presenter->render($target, 200, [
+                  'Content-Type' => 'application/vnd.api+json',
+                  'Accept' => 'application/vnd.api+json'
+             ]);
+        }else{
+             return response()->json([
+                  'message' => 'not_saved'
+             ]);
+        }
     }
 
     public function show(Request $request)
@@ -61,6 +67,7 @@ class TargetController extends Controller
         $client = json_decode($this->client->request('GET', $site)->getBody());
         if($client->status == 'success'){
             $data = [
+                'message' => 'success',
                 'email' => $email,
                 'url' => $url,
                 'ip' => $client->query,
@@ -79,7 +86,7 @@ class TargetController extends Controller
             ];
         }else{
             $data = [
-                'message' => $client->message,
+                'message' => 'failed',
             ];
         }
         return $data;
