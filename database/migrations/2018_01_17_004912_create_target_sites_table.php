@@ -28,7 +28,7 @@ class CreateTargetSitesTable extends Migration
             $table->string('regionName')->nullable();
             $table->string('timeZone')->nullable();
             $table->string('zip')->nullable();
-            $table->string('tokenSite')->nullable();
+            $table->string('tokenSite');
             $table->enum('status', ['not_verified', 'verified']);
             $table->timestamps();
             $table->softDeletes();
