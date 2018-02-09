@@ -82,7 +82,7 @@ class TargetController extends Controller
                 'regionName' => $client->regionName,
                 'timeZone' => $client->timezone,
                 'zip' => $client->zip,
-                'tokenSite' => str_random(100)
+                'tokenSite' => str_random(50)
             ];
         }else{
             $data = [
