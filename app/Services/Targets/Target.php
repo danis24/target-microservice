@@ -30,7 +30,7 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
      */
 
     protected $fillable = [
-        'email', 'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip', 'tokenSite', 'status'
+        'email', 'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip', 'tokenSite', 'status', 'scanner_id'
     ];
 
     /**
@@ -47,7 +47,8 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
     /**
      * @{inheritDoc}
      */
-    public function transform() {
+    public function transform()
+    {
         $transformed = $this->toArray();
         foreach ($this->getUuidAttributeNames() as $uuidAttributeName) {
             $value = $this->getAttribute($uuidAttributeName);
@@ -60,8 +61,8 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
     /**
      * @{inheritDoc}
      */
-    public function entityType() {
+    public function entityType()
+    {
         return "targets";
     }
-
 }

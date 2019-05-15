@@ -30,6 +30,7 @@ class CreateTargetSitesTable extends Migration
             $table->string('zip')->nullable();
             $table->string('tokenSite');
             $table->enum('status', ['not_verified', 'verified']);
+            $table->string('scanner_id');
             $table->timestamps();
             $table->softDeletes();
         });

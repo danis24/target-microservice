@@ -19,7 +19,7 @@ class TargetService
 
     public function read($id)
     {
-         return $this->newTarget()->findByUuid($id);
+        return $this->newTarget()->findByUuid($id);
     }
 
     public function add($payload)
@@ -29,13 +29,13 @@ class TargetService
 
     public function showByEmail($email)
     {
-         return $this->newTarget()->where('email', $email)->paginate();
+        return $this->newTarget()->where('email', $email)->paginate();
     }
 
     public function update($id, $payload)
     {
-         $target = $this->read($id);
-         $target->fill($payload)->save();
-         return $target;
+        $target = $this->read($id);
+        $target->fill($payload)->save();
+        return $target;
     }
 }
