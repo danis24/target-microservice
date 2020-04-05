@@ -30,7 +30,23 @@ class Target extends Model implements AuthenticatableContract, AuthorizableContr
      */
 
     protected $fillable = [
-        'email', 'ip', 'url', 'city', 'country', 'countryCode', 'isp', 'latitude', 'longitude', 'org', 'regionName', 'timeZone', 'zip', 'tokenSite', 'status', 'scanner_id'
+        'email',
+        'url',
+        'country',
+        'countryCode',
+        'region',
+        'regionName',
+        'city',
+        'zip',
+        'latitude',
+        'longitude',
+        'timeZone',
+        'isp',
+        'org',
+        'as',
+        'query',
+        'scanner_id',
+        'launched'
     ];
 
     /**

@@ -11,8 +11,11 @@
 |
 */
 
+$router->post('/getserverinfo', 'TargetController@getServerInfo');
 $router->get('/targets', 'TargetController@browse');
-$router->get('/verified/{id}', 'TargetController@verified');
 $router->get('/targets/{id}', 'TargetController@read');
 $router->post('/targets', 'TargetController@add');
+$router->delete('/targets/{id}', 'TargetController@delete');
 $router->post('/targets/by_email', 'TargetController@show');
+$router->patch('/launch/{id}', 'TargetController@updateScannerId');
+$router->get('/geo', 'TargetController@getGeo');

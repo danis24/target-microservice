@@ -20,48 +20,100 @@ class TargetController extends Controller
         $this->endpoint = env("SCANNER_URL");
     }
 
-    public function browse()
+    public function getServerInfo(Request $request)
     {
-        $target = $this->service->browse();
-        return $this->presenter->renderPaginator($target);
+        $this->validate($request, [
+            'address' => 'required'
+        ]);
+        $result = [];
+        foreach ($request->address as $key => $value) {
+            $site = 'https://api.indoxploit.or.id/domain/'.$value["link"];
+            $client = json_decode($this->client->request('GET', $site)->getBody());
+            $result[] = [
+                "domain" => $value["link"],
+                "info" => $client->data->geolocation
+            ];
+        }
+        return response()->json($result);
+    }
+
+    public function updateScannerId($id, Request $request)
+    {
+        $this->validate($request, [
+            "scanner_id" => "required"
+        ]);
+
+        $target = $this->service->update($id, [
+            "scanner_id" => $request->scanner_id,
+            "launched" => "1",
+        ]);
+
+        if ($target) {
+            return response()->json([
+                "status" => 1
+            ]);
+        }
+        return response()->json([
+            "status" => 1
+        ]);
+    }
+
+    public function browse(Request $request)
+    {
+        if (!$request->exists('filter')) {
+            $target = $this->service->browse();
+            return $this->presenter->renderPaginator($target);
+        }
+        if ($request->exists('filter')) {
+            $target = $this->service->filter($request);
+            return $this->presenter->renderPaginator($target);
+        }
     }
 
     public function read($id)
     {
-        $target = $this->service->read($id);
-        return $this->presenter->render($target);
+        $target = $this->service->getByScannerId($id);
+        if ($target) {
+            return $this->presenter->render($target);
+        }
+        return $this->notFountSetValue();
     }
 
     public function add(Request $request)
     {
         $this->validate($request, [
              'url' => 'required',
-             'email' => 'required|email'
+             'query' => 'required'
         ]);
-        $data = $this->getDetailUrl($request->url, $request->email);
-        if ($data['message'] == 'success') {
-            $target = $this->service->add($data);
-            return $this->presenter->render($target, 200, [
-                  'Content-Type' => 'application/vnd.api+json',
-                  'Accept' => 'application/vnd.api+json'
-             ]);
-        } else {
+        if ($this->service->checkExist(["email" => $request->email, "url" => $request->url])->count()) {
             return response()->json([
-                  'message' => 'not_saved'
-             ]);
+                "status" => "exist",
+                "message" => "Domain Sudah Ada!"
+            ]);
         }
+        $target = $this->service->add($request->all());
+        if ($target) {
+            return $this->presenter->render($target, 200, [
+                'Content-Type' => 'application/vnd.api+json',
+                'Accept' => 'application/vnd.api+json'
+            ]);
+        }
+        return response()->json([
+            'message' => 'not_saved'
+       ]);
     }
 
-    public function addToScanner($url)
+    public function delete($id)
     {
-        $site = $this->endpoint."/scanners";
-        $client = $this->client->request('POST', $site, [
-            'json' => [
-                 'url' => "http://".$url
-            ]
-          ])->getBody();
-        $result = json_decode($client);
-        return $result->id;
+        $deleted = $this->service->delete($id);
+        if ($deleted) {
+            return response()->json([
+                'meta' => [
+                    'deleted_count' => $deleted,
+                ]
+            ], 204);
+        }
+        return $this->notFountSetValue();
     }
 
     public function show(Request $request)
@@ -72,38 +124,6 @@ class TargetController extends Controller
 
         $data = $this->service->showByEmail($request->email);
         return $this->presenter->renderPaginator($data);
-    }
-
-    private function getDetailUrl($url, $email)
-    {
-        $site = 'http://ip-api.com/json/'.$url;
-        $client = json_decode($this->client->request('GET', $site)->getBody());
-        if ($client->status == 'success') {
-            $data = [
-                'message' => 'success',
-                'email' => $email,
-                'url' => $url,
-                'ip' => $client->query,
-                'as' => $client->as,
-                'city' => $client->city,
-                'country' => $client->country,
-                'countryCode' => $client->countryCode,
-                'isp' => $client->isp,
-                'latitude' => $client->lat,
-                'longitude' => $client->lon,
-                'org' => $client->org,
-                'regionName' => $client->regionName,
-                'timeZone' => $client->timezone,
-                'zip' => $client->zip,
-                'tokenSite' => str_random(50),
-                'scanner_id' => $this->addToScanner($url)
-            ];
-        } else {
-            $data = [
-                'message' => 'failed',
-            ];
-        }
-        return $data;
     }
 
     protected function checkSite($url, $token)
@@ -142,5 +162,24 @@ class TargetController extends Controller
             }
         }
         return response()->json($data);
+    }
+
+    public function getGeo()
+    {
+        $geos = $this->service->getGeoLocation();
+        $data = [];
+        foreach ($geos as $key => $value) {
+            $data[] = [$value->country, $value->total];
+        }
+        return response()->json($data);
+    }
+
+    private function notFountSetValue()
+    {
+        return response()->json([
+            'meta' => [
+                'status' => "Not Found",
+            ]
+        ], 404);
     }
 }

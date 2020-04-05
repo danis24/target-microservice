@@ -7,10 +7,10 @@ use Uuid;
 use Illuminate\Pagination\AbstractPaginator;
 use App\Presenters;
 
-
-class JsonApiPresenter {
-
-    private function transform(JsonApiPresenterable $transformer) {
+class JsonApiPresenter
+{
+    private function transform(JsonApiPresenterable $transformer)
+    {
         $transformed = $transformer->transform();
         $data = [
             'id' => $transformed['id'],
@@ -24,8 +24,9 @@ class JsonApiPresenter {
     * Tranform Colletion in UUID
      * @param Illuminate\Support\Collection $transformer
      */
-    public function transformCollection(Collection $transformers) {
-        return $transformers->map(function(JsonApiPresenterable $transformer){
+    public function transformCollection(Collection $transformers)
+    {
+        return $transformers->map(function (JsonApiPresenterable $transformer) {
             return $this->transform($transformer);
         });
     }
@@ -35,8 +36,8 @@ class JsonApiPresenter {
      * @param Uuid $Users
      * @return \Illuminate\Http\JsonResponse
      */
-    public function render(JsonApiPresenterable $transformer, $statusCode = 200, $headers = []) {
-
+    public function render(JsonApiPresenterable $transformer, $statusCode = 200, $headers = [])
+    {
         $response = [
             'data' => $this->transform($transformer),
         ];
@@ -48,7 +49,8 @@ class JsonApiPresenter {
      * @param Illuminate\Support\Collection $Users
      * @return \Illuminate\Http\JsonResponse
      */
-    public function renderCollection(Collection $transformer, $statusCode = 200, $headers = []) {
+    public function renderCollection(Collection $transformer, $statusCode = 200, $headers = [])
+    {
         $transformer = $this->transformCollection($transformer);
         return response()->json($transformer, $statusCode, $headers);
     }
@@ -58,7 +60,8 @@ class JsonApiPresenter {
      * @param Illuminate\Pagination\AbstractPaginator
      * @return \Illuminate\Http\JsonResponse
      */
-    public function renderPaginator(AbstractPaginator $paginator, $statusCode = 200, $headers = []) {
+    public function renderPaginator(AbstractPaginator $paginator, $statusCode = 200, $headers = [])
+    {
         $collection = $this->transformCollection($paginator->getCollection());
         $nextUrl = null;
 
@@ -69,7 +72,8 @@ class JsonApiPresenter {
         $response = [
             'meta' => [
                 'total' => $paginator->total(),
-                'count' => $paginator->count()
+                'count' => $paginator->count(),
+                'total_page' => $paginator->lastPage()
             ],
             'data' => $collection,
             'links' => [
